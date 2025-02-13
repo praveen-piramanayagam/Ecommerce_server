@@ -11,10 +11,14 @@ const app = express();
 
 app.use(
     cors({
-      origin: "http://localhost:5173", // Your React frontend
-      credentials: true, // Allows sending cookies
+      origin: [
+        "http://localhost:5173", 
+        "https://ecommercewithpayment.netlify.app/"
+      ],
+      credentials: true,
     })
   );
+  
 
 // Set up express-session middleware
 app.use(session({
@@ -80,7 +84,7 @@ app.get(
     "/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/" }),
     (req, res) => {
-      res.redirect("http://localhost:5173/home"); // Redirect to frontend
+      res.redirect("https://ecommercewithpayment.netlify.app/home"); // Redirect to frontend
     }
   );
   
@@ -108,7 +112,7 @@ function isAuthenticated(req, res, next) {
 app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
       if (err) return next(err);
-      res.redirect("http://localhost:5173/login"); // Redirect to frontend login page
+      res.redirect("https://ecommercewithpayment.netlify.app/login"); // Redirect to frontend login page
     });
   });
   
