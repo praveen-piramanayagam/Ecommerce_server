@@ -11,26 +11,26 @@ const app = express();
 
 app.use(
     cors({
-      origin: [
-        "http://localhost:5173", 
-        "https://ecommercewithpayment.netlify.app/"
-      ],
-      credentials: true,
+      origin: "https://ecommercewithpayment.netlify.app", // Replace with your Netlify URL
+      credentials: true, // Allow credentials (cookies) from the frontend
     })
   );
+  
   
 
 // Set up express-session middleware
 app.use(session({
-    secret: process.env.SESSION_KEY,
+    secret: process.env.SESSION_KEY || "fallback-secret-key",
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // Set to true for HTTPS in production
       httpOnly: true,
-      sameSite: "lax"
+      sameSite: "None", // Important for cross-origin requests
+      maxAge: 24 * 60 * 60 * 1000 // Cookie duration (1 day)
     }
   }));
+  
   
 
 // Initialize Passport.js
