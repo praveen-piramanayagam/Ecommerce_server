@@ -17,18 +17,16 @@ app.use(
   );
 
 // Set up express-session middleware
-app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: true,
-      cookie: {
-        secure: process.env.NODE_ENV === "production", // Set true in production
-        httpOnly: true,
-        sameSite: "none", // or "none" if using HTTPS in frontend
-      },
-    })
-  );
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "lax"
+    }
+  }));
   
 
 // Initialize Passport.js
@@ -40,8 +38,8 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
-      },
+        callbackURL: "https://ecommerce-server-ki4x.onrender.com/auth/google/callback"
+    },
       async (accessToken, refreshToken, profile, done) => {
         let user = await User.findOne({ googleId: profile.id });
   
@@ -59,7 +57,6 @@ passport.use(
       }
     )
   );
-  
   console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 
