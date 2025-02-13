@@ -17,12 +17,10 @@ app.use(
 );
 
   
-  
-
 // Set up express-session middleware
 app.use(
     session({
-      secret: process.env.SESSION_KEY || 'fallback-secret-key', // Set this in your .env file for production
+      secret: process.env.SESSION_KEY || 'fallback-secret-key',
       resave: false,
       saveUninitialized: true,
       cookie: {
@@ -33,10 +31,7 @@ app.use(
     },
     })
   );
-  
-  
-  
-  
+    
 
 // Initialize Passport.js
 app.use(passport.initialize());
@@ -117,8 +112,6 @@ function isAuthenticated(req, res, next) {
     });
   });
   
-  
-
 
 // connect db
 mongoose.connect(process.env.MONGO_URI)
