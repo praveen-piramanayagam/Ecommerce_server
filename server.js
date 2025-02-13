@@ -17,12 +17,19 @@ app.use(
   );
 
 // Set up express-session middleware
-app.use(session({
-    secret: 'SESSION_KEY', // Replace with a strong, secret key
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // If you use HTTPS, set this to true
-  }));
+app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        secure: process.env.NODE_ENV === "production", // Set true in production
+        httpOnly: true,
+        sameSite: "none", // or "none" if using HTTPS in frontend
+      },
+    })
+  );
+  
 
 // Initialize Passport.js
 app.use(passport.initialize());
@@ -33,7 +40,7 @@ passport.use(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
+        callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         let user = await User.findOne({ googleId: profile.id });
@@ -52,6 +59,7 @@ passport.use(
       }
     )
   );
+  
   console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
 
