@@ -90,8 +90,7 @@ app.get("/auth/google/callback",
     (req, res) => {
       res.redirect("https://ecommercewithpayment.netlify.app/home"); // Redirect to frontend after successful login
     }
-  );
-  
+  );  
   
 
 // Middleware to check if user is logged in
