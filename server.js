@@ -10,26 +10,30 @@ const User = require("./models/User");
 const app = express();
 
 app.use(
-    cors({
-      origin: "https://ecommercewithpayment.netlify.app", // Replace with your Netlify URL
-      credentials: true, // Allow credentials (cookies) from the frontend
-    })
-  );
+  cors({
+    origin: "https://ecommercewithpayment.netlify.app", // React frontend hosted on Netlify
+    credentials: true, // Allow cookies to be sent with requests
+  })
+);
+
   
   
 
 // Set up express-session middleware
-app.use(session({
-    secret: process.env.SESSION_KEY,
-    resave: false,
-    saveUninitialized: false, // Set to false to avoid creating a session if no data is set
-    cookie: {
-      secure: process.env.NODE_ENV === "production", // Set this to true if using HTTPS
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 // Session expires after 1 day
-    }
-  }));
+app.use(
+    session({
+      secret: process.env.SESSION_KEY || 'fallback-secret-key', // Set this in your .env file for production
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production', // true for HTTPS
+        httpOnly: true, // Prevent JavaScript from accessing the cookie
+        sameSite: 'None', // Required for cross-origin cookies
+        maxAge: 24 * 60 * 60 * 1000, // Cookie expiry time (1 day)
+      },
+    })
+  );
+  
   
   
   
@@ -81,39 +85,39 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 
 
 // Google OAuth Callback
-app.get(
-    "/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/" }),
+app.get("/auth/google/callback", 
+    passport.authenticate("google", { failureRedirect: "/login" }),
     (req, res) => {
-      res.redirect("https://ecommercewithpayment.netlify.app/home"); // Redirect to frontend
+      res.redirect("https://ecommercewithpayment.netlify.app/home"); // Redirect to frontend after successful login
     }
   );
+  
   
 
 // Middleware to check if user is logged in
 function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-      return next(); // Continue to the next route handler
+      return next(); // Continue to next route handler
     }
-    res.status(401).json({ message: "Unauthorized" }); // If not authenticated
+    res.status(401).json({ message: "Unauthorized" }); // Return Unauthorized if not authenticated
   }
   
-  // Protect /profile route
   app.get("/profile", isAuthenticated, (req, res) => {
-    console.log("Session:", req.session); // Log session to see if user is authenticated
-    res.json(req.user); // Send user data if logged in
+    if (req.user) {
+      res.json(req.user); // Send user data if authenticated
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
   });
   
   
-
-
-// Logout Route
-app.get("/logout", (req, res, next) => {
+  app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
       if (err) return next(err);
-      res.redirect("https://ecommercewithpayment.netlify.app/login"); // Redirect to frontend login page
+      res.redirect("https://ecommercewithpayment.netlify.app/login"); // Redirect to login page after logout
     });
   });
+  
   
 
 
