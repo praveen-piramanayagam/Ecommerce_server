@@ -29,8 +29,8 @@ app.use(
         secure: process.env.NODE_ENV === 'production', // true for HTTPS
         httpOnly: true, // Prevent JavaScript from accessing the cookie
         sameSite: 'None', // Required for cross-origin cookies
-        maxAge: 24 * 60 * 60 * 1000, // Cookie expiry time (1 day)
-      },
+        maxAge: 10 * 60 * 1000, // 10 minutes in milliseconds
+    },
     })
   );
   
