@@ -20,16 +20,17 @@ app.use(
 
 // Set up express-session middleware
 app.use(session({
-    secret: process.env.SESSION_KEY || "fallback-secret-key",
+    secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Set to false to avoid creating a session if no data is set
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Set to true for HTTPS in production
+      secure: process.env.NODE_ENV === "production", // Set this to true if using HTTPS
       httpOnly: true,
-      sameSite: "None", // Important for cross-origin requests
-      maxAge: 24 * 60 * 60 * 1000 // Cookie duration (1 day)
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24 // Session expires after 1 day
     }
   }));
+  
   
   
 
@@ -99,12 +100,10 @@ function isAuthenticated(req, res, next) {
   
   // Protect /profile route
   app.get("/profile", isAuthenticated, (req, res) => {
-    if (req.user) {
-      res.json(req.user); // Send user data if logged in
-    } else {
-      res.status(401).json({ message: "Unauthorized" });
-    }
+    console.log("Session:", req.session); // Log session to see if user is authenticated
+    res.json(req.user); // Send user data if logged in
   });
+  
   
 
 
