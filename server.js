@@ -120,4 +120,4 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // Start Server locally
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+app.listen(5000, () => console.log("Server running on port http://localhost:5000"));
