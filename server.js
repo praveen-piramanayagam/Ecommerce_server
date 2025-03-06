@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://ecommercewithpayment.netlify.app", // React frontend hosted on Netlify
+    origin: ["https://ecommercewithpayment.netlify.app","http://localhost:5174"], // React frontend hosted on Netlify
     credentials: true, // Allow cookies to be sent with requests
   })
 );
@@ -81,7 +81,7 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 
 // Google OAuth Callback
 app.get("/auth/google/callback", 
-    passport.authenticate("google", { failureRedirect: "/login" }),
+    passport.authenticate("google", { failureRedirect: "/" }),
     (req, res) => {
       res.redirect("https://ecommercewithpayment.netlify.app/home"); // Redirect to frontend after successful login
     }
@@ -108,7 +108,7 @@ function isAuthenticated(req, res, next) {
   app.get("/logout", (req, res, next) => {
     req.logout(function (err) {
       if (err) return next(err);
-      res.redirect("https://ecommercewithpayment.netlify.app/login"); // Redirect to login page after logout
+      res.redirect("https://ecommercewithpayment.netlify.app/"); // Redirect to login page after logout
     });
   });
   
